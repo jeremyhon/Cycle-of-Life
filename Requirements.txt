@@ -1,0 +1,19 @@
+Planned features
+
+	- Generations
+		- Kids grow up, become adults
+		- Adults have kids
+	- Attributes/Flags
+		- Used to represent the state of a person (kid/adult)
+		- Attributes or stats represent a variable numerical state
+			- e.g. happiness: 100
+		- Flags are a binary value that represent if an event has happened
+			- represented as a sequence of numbers, each number is an event that the character has experienced e.g. 1345
+	- Events
+		- Random events trigger depending on circumstances
+		- Events sometimes have choices
+		- Choices have ramifications
+		- Some choices may be greyed out
+			- tempt people to keep playing and unlock those choices
+	- UI
+	
