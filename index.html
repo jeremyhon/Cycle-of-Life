@@ -1,23 +1,21 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta charset="UTF-8"/>
-		<title>The Cycle of Life</title>
-		<script src="lib\jquery-2.1.4.js"></script>
-		<script>
-			function myFunction() {
-			    $("#h01").html("jQuery seems to work.")
-			}
-			$(document).ready(myFunction);
-		</script>
-	</head>
-	<body>
-		<div class = "row">
-			<div class = "col-md-12">
-				<p> This is the first page </p>
-				<a href="bootstrap.html">Bootstrap Test Page</a>
-				<h1 id="h01"></h1>
-			</div>	
+<head>
+	<meta charset="UTF-8"/>
+	<title>The Cycle of Life</title>
+	<link rel="stylesheet" href="base.css" />
+	<script src="lib\jquery-2.1.4.js"></script>
+	<script src="game.js"></script>
+</head>
+<body>
+	<div id="top-bar">
+		Age: <span id="child-age-display">0</span>
+	</div>
+	<div id="center">
+		<span id="child-notifications">Notifications go here.</span><br>
+		<div id="event-holder">
+			<button class="event-button" id="event-1">Choice 1</button>
 		</div>
-	</body>
+	</div>
+</body>
 </html>

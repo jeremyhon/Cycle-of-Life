@@ -9,7 +9,7 @@ window.setInterval(function () {
         update(child);
     }
     
-    //update counter
+    //update everything
     $('#child-age-display').text(Math.floor(child.currentAge));
 }, 10);
 
@@ -32,15 +32,19 @@ function rollEvent(person) {
 
 function triggerEvent(person){
     //pick a random event from the list of allowable events.
+    //TODO: trim the list of allowable events! Right now it allows everything lol
+    var randEventIndex = allowableEvents[Math.random() * person.allowableEvents.length];
+    var newEvent = EventDB[randEventIndex];
+
     //pull the previous text
     var prevNotifs = $('#notifications').text();
-    fetchNewEvent(person);
-    var newNotifs
+    var newNotifs = prevNotifs + "\n\n" + newEvent.notif;
 }
 
-function Event(index, notif, choices, reqs = []){
+function Event(index, notif, choices, reqs){
     this.index = index;
     this.notif = notif;
+    // choices and reqs should be arrays. Please pass arrays into these parameters.
     this.choices = choices;
     this.reqs = reqs;
 }
@@ -55,8 +59,10 @@ function Person(name, currentAge = 0, eventMultiplier = 0.1, allowableEvents = [
             allowableEvents += [i];
         };
     }
+    this.notifsHistory = "";
 }
 
+//the events database. store all events here.
 var EventDB = [
     new Event(0, 
         "This is a sample event.", 
