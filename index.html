@@ -5,16 +5,24 @@
 	<title>The Cycle of Life</title>
 	<link rel="stylesheet" href="base.css" />
 	<script src="lib\jquery-2.1.4.js"></script>
+	<script src="events.js"></script>
 	<script src="game.js"></script>
 </head>
 <body>
-	<div id="top-bar">
-		Age: <span id="child-age-display">0</span>
-	</div>
-	<div id="center">
-		<span id="child-notifications">Notifications go here.</span><br>
-		<div id="event-holder">
-			<button class="event-button" id="event-1">Choice 1</button>
+	<div class="container">
+		<div id="top-bar" class="row">
+			<div class="col-md-6" id="left-top">
+				Debug: <span id="debug">0</span>
+			</div>
+			<div class="col-md-6" id="right-top">
+				Age: <span id="child-age-display">0</span>
+			</div>
+			<div id="center" class = "row">
+				<span id="child-notifications">Notifications go here.</span><br>
+				<div id="child-event-holder">
+					<button class="event-button" id="event-1">Useless button</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>

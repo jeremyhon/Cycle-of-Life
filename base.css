@@ -1,4 +1,8 @@
-#top-bar{
+#left-top{
+	text-align: left;
+}
+
+#right-top{
     text-align: right;
 }
 
