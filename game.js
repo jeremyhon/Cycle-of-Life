@@ -40,7 +40,7 @@ function rollEvent(person) {
 }
 
 function triggerEvent(person){
-    onEvent = true;
+    person.onEvent = true;
     //pick a random event from the list of allowable events.
     //TODO: trim the list of allowable events! Right now it allows everything lol
     var randEventIndex = person.allowableEvents[Math.floor(Math.random() * person.allowableEvents.length)];
@@ -57,22 +57,19 @@ function triggerEvent(person){
 }
 
 function createButtons(event, person){
-    //for each choice in the event
-    for(var i = 0; i<event.choices.length; i++){
-        //make a button and a parent div
-        var tmpDiv = jQuery(document.createElement('div'));
-        var tmpBtn = jQuery(document.createElement('button'));
-        //add the button to the div
-        tmpDiv.append(tmpBtn);
+    //the button to add
+    var test = $('<button/>',
+    {
+        text: 'Test',
+        click: function () { alert('hi'); }
+    });
 
-        //set the attributes of the button
-        tmpBtn.addClass("btn btn-default");
-        tmpBtn.text(event.choices[i]);
-
-        //add the div to the event holder.
-        if(person.currentAge<25){
-            $('#child-event-holder').append(tmpDiv);
-        } else {}
+    //create a div and insert the button inside
+    var parent = $('<div></div>').children().append(test).end();
+    //add the div to the event holder.
+    if(person.currentAge<25){
+        $('#child-event-holder').append(parent);
+    } else {
         //$('#adult-event-holder').append(parent);
     }
 }
