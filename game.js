@@ -1,3 +1,4 @@
+"use strict";
 var adultExists = false;
 var onEvent = false;
 var eventTimer = 100;
@@ -15,6 +16,7 @@ window.setInterval(function () {
     //update everything
     $('#child-age-display').text(Math.floor(child.currentAge));
     $('#debug').text(debugText);
+    debugText=onEvent;
     jQuery('#child-notifications').html(embedNL(child.notifsHistory));
 }, 10);
 
@@ -31,7 +33,6 @@ function update(person){
 function rollEvent(person) {
     //generate a random number
     var newRandom = Math.random();
-    debugText = newRandom;
     //check against the event multiplier
     if(newRandom < person.eventMultiplier){
         //jackpot!
@@ -42,7 +43,6 @@ function rollEvent(person) {
 function triggerEvent(person){
     onEvent = true;
     //pick a random event from the list of allowable events.
-    //TODO: trim the list of allowable events! Right now it allows everything lol
     var randEventIndex = person.allowableEvents[Math.floor(Math.random() * person.allowableEvents.length)];
     var newEvent = EventDB[randEventIndex];
 
@@ -65,16 +65,28 @@ function createButtons(event, person){
         //add the button to the div
         tmpDiv.append(tmpBtn);
 
+        //set the attribute of the div
+        tmpDiv.addClass("tempDiv");
+
         //set the attributes of the button
         tmpBtn.addClass("btn btn-default");
         tmpBtn.text(event.choices[i]);
 
-        //add the div to the event holder.
+        //add the holder and the event click handler function
         if(person.currentAge<25){
-            $('#child-event-holder').append(tmpDiv);
+            var holder = '#child-event-holder';
+            $(holder).append(tmpDiv);
+            tmpBtn.click( function() {
+                evtClick(holder,event.results);
+            });
         } else {}
-        //$('#adult-event-holder').append(parent);
+        //$('#adult-event-holder').append(tmpDiv);
     }
+}
+
+function evtClick(holder, result){
+    onEvent=false;
+    $('.tempDiv').remove();
 }
 
 function Person(name, currentAge, eventMultiplier, allowableEvents){
