@@ -8,8 +8,8 @@ var child = new Person("defaultChild", 0, 0.1,[],0);
 
 // load function
 $(document).ready(function(){
-    //hides parent col at first
-    $("#parent-col").hide();
+    //hides adult col at first
+    $("#adult-col").hide();
 })
 
 // Update function (every 10ms)
@@ -64,7 +64,7 @@ function triggerEvent(person){
 function createButtons(event, person){
     //for each choice in the event
     for(var i = 0; i<event.choices.length; i++){
-        //make a button and a parent div
+        //make a button and a adult div
         var tmpDiv = jQuery(document.createElement('div'));
         var tmpBtn = jQuery(document.createElement('button'));
         //add the button to the div
@@ -95,12 +95,12 @@ function evtClick(holder, result){
 }
 
 //took me so long to get this just right lol.
-function showParent(){
+function showAdult(){
     var tmpDiv = jQuery(document.createElement('div'));
     tmpDiv.addClass("animDiv col-md-4");
     $("#child-col").removeClass("col-md-offset-4").before(tmpDiv);
     $(".animDiv").hide('slow', function(){});
-    $("#parent-col").show('slow',function(){});
+    $("#adult-col").show('slow',function(){});
 }
 
 function Person(name, currentAge, eventMultiplier, allowableEvents, happiness){
