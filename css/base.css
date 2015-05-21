@@ -2,18 +2,15 @@
 	border: 1px solid black;
 }
 
-#left-top{
+.left-top{
 	text-align: left;
 }
 
-#right-top{
+.right-top{
     text-align: right;
 }
 
-#center{
+.center{
     position: relative;
     text-align: center;
-}
-
-.event-button{
 }

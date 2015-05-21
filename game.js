@@ -4,7 +4,7 @@ var onEvent = false;
 var eventTimer = 100;
 var eventMax = 10;
 var debugText = "";
-var child = new Person("defaultChild", 0, 0.1,[],0);
+var child = new Person("defaultChild");
 
 // load function
 $(document).ready(function(){
@@ -20,14 +20,15 @@ window.setInterval(function () {
     }
     eventTimer--;
     //update everything
-    $('#child-age-display').text(Math.floor(child.currentAge));
+    $('.child.age').text(Math.floor(child.age));
+    $('.child.happiness').text(Math.floor(child.happiness));
     $('#child-debug').text(debugText);
     jQuery('#child-notifications').html(embedNL(child.notifsHistory));
 }, 10);
 
 function update(person){
     //increment age
-    person.currentAge += 0.01;
+    person.age += 0.01;
     //roll for events
     if(eventTimer < 0){
         eventTimer = eventMax;
@@ -78,11 +79,11 @@ function createButtons(event, person){
         tmpBtn.text(event.choices[i]);
 
         //add the holder and the event click handler function
-        if(person.currentAge<25){
+        if(person.age<25){
             var holder = '#child-event-holder';
             $(holder).append(tmpDiv);
             tmpBtn.click( function() {
-                evtClick(holder,event.results);
+                evtClick(holder, event.results[i]);
             });
         } else {}
         //$('#adult-event-holder').append(tmpDiv);
@@ -103,16 +104,14 @@ function showAdult(){
     $("#adult-col").show('slow',function(){});
 }
 
-function Person(name, currentAge, eventMultiplier, allowableEvents, happiness){
+function Person(name){
     this.name = name;
-    this.currentAge = currentAge;
+    this.age = 0;
     this.eventMultiplier = 0.1;
-    //if allowableEvents is empty, insert everything
-    if(allowableEvents.length == 0){
+    var allowableEvents = [];
         for (var i = 0; i < EventDB.length; i++) {
             allowableEvents += [i];
-        };
-    }
+        }
     this.allowableEvents = allowableEvents;
     this.notifsHistory = [];
     this.happiness = 0;
