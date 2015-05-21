@@ -17,18 +17,37 @@
 </head>
 <body>
 	<div class="container">
-		<div class="row" id="top-bar">
-			<div class="col-md-6" id="left-top">
-				Debug: <span id="debug"></span>
+		<div class="row" id="game-row">
+			<div class="col-md-4 col-md-offset-2" id="parent-col">
+				<div class="row" id="top-bar">
+					<div class="col-md-6 left-top">
+						Debug: <span id="parent-debug"></span>
+					</div>
+					<div class="col-md-6 right-top">
+						Age: <span id="parent-age-display"></span>
+					</div>
+				</div>
+				<div class ="row parent center">
+					<div class="col-md-12">
+						<span id="parent-notifications"></span><br>
+						<div id="parent-event-holder"></div>
+					</div>
+				</div>
 			</div>
-			<div class="col-md-6" id="right-top">
-				Age: <span id="child-age-display"></span>
-			</div>
-		</div>
-		<div id="center" class = "row">
-			<div class="col-md-12">
-				<span id="child-notifications">Notifications go here.</span><br>
-				<div id="child-event-holder">
+			<div class="col-md-4 col-md-offset-4" id="child-col">
+				<div class="row" id="top-bar">
+					<div class="col-md-6" id="left-top">
+						Debug: <span id="child-debug"></span>
+					</div>
+					<div class="col-md-6" id="right-top">
+						Age: <span id="child-age-display"></span>
+					</div>
+				</div>
+				<div id="center" class = "row">
+					<div class="col-md-12">
+						<span id="child-notifications"></span><br>
+						<div id="child-event-holder"></div>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -4,9 +4,15 @@ var onEvent = false;
 var eventTimer = 100;
 var eventMax = 10;
 var debugText = "";
-var child = new Person("defaultChild", 0, 0.1,[]);
+var child = new Person("defaultChild", 0, 0.1,[],0);
 
-// Run UI update code every 10ms
+// load function
+$(document).ready(function(){
+    //hides parent col at first
+    $("#parent-col").hide();
+})
+
+// Update function (every 10ms)
 window.setInterval(function () {
     //if an event is not happening
     if(!onEvent){
@@ -15,8 +21,7 @@ window.setInterval(function () {
     eventTimer--;
     //update everything
     $('#child-age-display').text(Math.floor(child.currentAge));
-    $('#debug').text(debugText);
-    debugText=onEvent;
+    $('#child-debug').text(debugText);
     jQuery('#child-notifications').html(embedNL(child.notifsHistory));
 }, 10);
 
@@ -89,7 +94,16 @@ function evtClick(holder, result){
     $('.tempDiv').remove();
 }
 
-function Person(name, currentAge, eventMultiplier, allowableEvents){
+//took me so long to get this just right lol.
+function showParent(){
+    var tmpDiv = jQuery(document.createElement('div'));
+    tmpDiv.addClass("animDiv col-md-4");
+    $("#child-col").removeClass("col-md-offset-4").before(tmpDiv);
+    $(".animDiv").hide('slow', function(){});
+    $("#parent-col").show('slow',function(){});
+}
+
+function Person(name, currentAge, eventMultiplier, allowableEvents, happiness){
     this.name = name;
     this.currentAge = currentAge;
     this.eventMultiplier = 0.1;
@@ -101,6 +115,7 @@ function Person(name, currentAge, eventMultiplier, allowableEvents){
     }
     this.allowableEvents = allowableEvents;
     this.notifsHistory = [];
+    this.happiness = 0;
 }
 
 function embedNL(lines) {
