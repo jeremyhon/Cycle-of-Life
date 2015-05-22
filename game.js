@@ -22,7 +22,8 @@ window.setInterval(function () {
     //update everything
     $('.child.age').text(Math.floor(child.age));
     $('.child.happiness').text(Math.floor(child.happiness));
-    $('#child-debug').text(debugText);
+    $('.child.debug').text(debugText);
+    debugText=onEvent;
     jQuery('#child-notifications').html(embedNL(child.notifsHistory));
 }, 10);
 
@@ -52,47 +53,68 @@ function triggerEvent(person){
     var randEventIndex = person.allowableEvents[Math.floor(Math.random() * person.allowableEvents.length)];
     var newEvent = EventDB[randEventIndex];
 
-    //push the new notification into the queue
-    person.notifsHistory.push(newEvent.notif);
-    //trim the notifications
-    if(person.notifsHistory.length > 5){
-        person.notifsHistory.shift();
-    }
+    pushNotif(person, newEvent.notif);
+
     //create the button
     createButtons(newEvent, person);
 }
 
+function pushNotif(person, notif){
+    //push the new notification into the queue
+    person.notifsHistory.push(notif);
+    //trim the notifications
+    if(person.notifsHistory.length > 5){
+        person.notifsHistory.shift();
+    }
+}
+
 function createButtons(event, person){
+    var state = "adult";
+    var tmpDiv;
+    var tmpBtn;
+    if(person.age<25){
+        state = "child";
+    }
     //for each choice in the event
     for(var i = 0; i<event.choices.length; i++){
         //make a button and a adult div
-        var tmpDiv = jQuery(document.createElement('div'));
-        var tmpBtn = jQuery(document.createElement('button'));
+        tmpDiv = jQuery(document.createElement('div'));
+        tmpBtn = jQuery(document.createElement('button'));
         //add the button to the div
         tmpDiv.append(tmpBtn);
 
         //set the attribute of the div
-        tmpDiv.addClass("tempDiv");
+        tmpDiv.addClass("tempDiv "+state);
 
         //set the attributes of the button
-        tmpBtn.addClass("btn btn-default");
+        tmpBtn.addClass("btn btn-default eventBtn-"+i);
         tmpBtn.text(event.choices[i]);
 
-        //add the holder and the event click handler function
-        if(person.age<25){
-            var holder = '#child-event-holder';
-            $(holder).append(tmpDiv);
-            tmpBtn.click( function() {
-                evtClick(holder, event.results[i]);
-            });
-        } else {}
-        //$('#adult-event-holder').append(tmpDiv);
+        //add the button to correct event holder
+        $(".event-holder."+state).append(tmpDiv);
+        var result = event.results[i];
+        console.log(result);
+
+        //add the click function
+        evtClick(i, person, result);
     }
 }
 
-function evtClick(holder, result){
-    onEvent=false;
-    $('.tempDiv').remove();
+//executed on button click
+function evtClick(i, person, result){
+    $(".eventBtn-"+i).click(function(){
+        onEvent=false;
+        pushNotif(person, result.notif);
+        for (var j = 0; j < result.props.length; j++) {
+            updatePerson(person, result.props[j], result.values[j]);
+        }
+        $('.tempDiv').remove();
+    })
+}
+
+//updates a person's property with a value.
+function updatePerson(person, prop, value){
+    person[prop] += value;
 }
 
 //took me so long to get this just right lol.
@@ -100,8 +122,8 @@ function showAdult(){
     var tmpDiv = jQuery(document.createElement('div'));
     tmpDiv.addClass("animDiv col-md-4");
     $("#child-col").removeClass("col-md-offset-4").before(tmpDiv);
-    $(".animDiv").hide('slow', function(){});
-    $("#adult-col").show('slow',function(){});
+    $(".animDiv").hide('slow', function(){$("#adult-col").show('slow',function(){});});
+    
 }
 
 function Person(name){
@@ -109,9 +131,9 @@ function Person(name){
     this.age = 0;
     this.eventMultiplier = 0.1;
     var allowableEvents = [];
-        for (var i = 0; i < EventDB.length; i++) {
-            allowableEvents += [i];
-        }
+    for (var i = 0; i < EventDB.length; i++) {
+        allowableEvents += [i];
+    }
     this.allowableEvents = allowableEvents;
     this.notifsHistory = [];
     this.happiness = 0;
