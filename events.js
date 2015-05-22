@@ -7,7 +7,8 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You chose the default.",
-            happiness: -1
+            props: ["happiness"],
+            values: [-1]
         }]
     },{
         index: 1,
@@ -16,10 +17,12 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "Choice 1 is good.",
-            happiness: +3
+            props: ["happiness"],
+            values: [3]
         },{
             notif: "Choice 2 is not so good.",
-            happiness: +1
+            props: ["happiness"],
+            values: [1]
         }]
     }
 ];
