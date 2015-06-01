@@ -5,6 +5,7 @@ var eventTimer = 100;
 var eventMax = 10;
 var debugText = "";
 var child = new Person("defaultChild");
+var adult = undefined;
 
 // load function
 $(document).ready(function(){
@@ -20,11 +21,17 @@ window.setInterval(function () {
     }
     eventTimer--;
     //update everything
+
     $('.child.age').text(Math.floor(child.age));
     $('.child.happiness').text(Math.floor(child.happiness));
+    jQuery('.child.notifications').html(embedNL(child.notifsHistory));
     $('.child.debug').text(debugText);
-    debugText=onEvent;
-    jQuery('#child-notifications').html(embedNL(child.notifsHistory));
+
+    if(adult !== undefined){
+        $('.adult.age').text(Math.floor(adult.age));
+        $('.adult.happiness').text(Math.floor(adult.happiness));        
+        jQuery('.adult.notifications').html(embedNL(adult.notifsHistory));
+    }
 }, 10);
 
 function update(person){
@@ -93,15 +100,14 @@ function createButtons(event, person){
         //add the button to correct event holder
         $(".event-holder."+state).append(tmpDiv);
         var result = event.results[i];
-        console.log(result);
 
-        //add the click function
-        evtClick(i, person, result);
+        //add the click handler function
+        btnClickHandler(i, person, result);
     }
 }
 
 //executed on button click
-function evtClick(i, person, result){
+function btnClickHandler(i, person, result){
     $(".eventBtn-"+i).click(function(){
         onEvent=false;
         pushNotif(person, result.notif);
@@ -122,10 +128,19 @@ function showAdult(){
     var tmpDiv = jQuery(document.createElement('div'));
     tmpDiv.addClass("animDiv col-md-4");
     $("#child-col").removeClass("col-md-offset-4").before(tmpDiv);
-    $(".animDiv").hide('slow', function(){$("#adult-col").show('slow',function(){});});
-    
+    $(".animDiv").hide('slow', function(){});
+    $("#adult-col").show('slow',function(){});
 }
 
+//takes the properties in the children and puts inside the adult divisions.
+function switchToAdult(){
+    adult = child;
+    showAdult();
+    child = new Person("defaultChild");
+}
+
+
+//person prototype
 function Person(name){
     this.name = name;
     this.age = 0;
@@ -139,6 +154,7 @@ function Person(name){
     this.happiness = 0;
 }
 
+//handle adding new lines inside the notif div
 function embedNL(lines) {
     var htmls = [];
     var tmpDiv = jQuery(document.createElement('div'));
