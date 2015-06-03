@@ -1,4 +1,3 @@
-"use strict";
 var adultExists = false;
 var onEvent = false;
 var eventTimer = 100;
@@ -94,7 +93,7 @@ function createButtons(event, person){
         tmpDiv.addClass("tempDiv "+state);
 
         //set the attributes of the button
-        tmpBtn.addClass("btn btn-default eventBtn-"+i);
+        tmpBtn.addClass("btn btn-default margin eventBtn-"+i);
         tmpBtn.text(event.choices[i]);
 
         //add the button to correct event holder
@@ -126,8 +125,8 @@ function updatePerson(person, prop, value){
 //took me so long to get this just right lol.
 function showAdult(){
     var tmpDiv = jQuery(document.createElement('div'));
-    tmpDiv.addClass("animDiv col-md-4");
-    $("#child-col").removeClass("col-md-offset-4").before(tmpDiv);
+    tmpDiv.addClass("animDiv col-xs-3");
+    $("#child-col").removeClass("col-xs-offset-3").before(tmpDiv);
     $(".animDiv").hide('slow', function(){});
     $("#adult-col").show('slow',function(){});
 }
