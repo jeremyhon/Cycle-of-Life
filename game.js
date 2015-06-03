@@ -1,4 +1,3 @@
-var adultExists = false;
 var onEvent = false;
 var eventTimer = 40;
 var eventMax = 80;
@@ -22,7 +21,7 @@ window.setInterval(function () {
             update(adult);
 
         //roll for events
-        if(eventTimer < 0){
+        if(eventTimer <= 0){
             eventTimer = eventMax;
             rollEvent();
         }
@@ -42,13 +41,13 @@ function update(person){
 function updateUI(){
     $('.child.age').text(Math.floor(child.age));
     $('.child.happiness').text(Math.floor(child.happiness));
-    jQuery('.child.notifications').html(embedNL(child.notifsHistory));
+    $('.child.notifications').html(embedNL(child.notifsHistory));
     $('.child.debug').text(debugText);
 
     if(adult !== undefined){
         $('.adult.age').text(Math.floor(adult.age));
         $('.adult.happiness').text(Math.floor(adult.happiness));        
-        jQuery('.adult.notifications').html(embedNL(adult.notifsHistory));
+        $('.adult.notifications').html(embedNL(adult.notifsHistory));
     }
 }
 
@@ -70,6 +69,7 @@ function triggerEvent(person){
     onEvent = true;
     //pick a random event from the list of allowable events.
     var randEventIndex = person.allowableEvents[Math.floor(Math.random() * person.allowableEvents.length)];
+    //TODO: remove events from allowable after triggering
     var newEvent = EventDB[randEventIndex];
 
     pushNotif(person, newEvent.notif);
@@ -96,9 +96,9 @@ function createButtons(event, person){
     }
     //for each choice in the event
     for(var i = 0; i<event.choices.length; i++){
-        //make a button and a adult div
-        tmpDiv = jQuery(document.createElement('div'));
-        tmpBtn = jQuery(document.createElement('button'));
+        //make a button and a parent div
+        tmpDiv = $(document.createElement('div'));
+        tmpBtn = $(document.createElement('button'));
         //add the button to the div
         tmpDiv.append(tmpBtn);
 
@@ -106,8 +106,7 @@ function createButtons(event, person){
         tmpDiv.addClass("tempDiv "+state);
 
         //set the attributes of the button
-        tmpBtn.addClass("btn btn-default margin eventBtn-"+i);
-        tmpBtn.text(event.choices[i]);
+        tmpBtn.addClass("btn btn-default margin eventBtn-"+i).text(event.choices[i]);
 
         //add the button to correct event holder
         $(".event-holder."+state).append(tmpDiv);
@@ -144,7 +143,7 @@ function updatePerson(person, prop, value){
 
 //took me so long to get this just right lol.
 function showAdult(){
-    var tmpDiv = jQuery(document.createElement('div'));
+    var tmpDiv = $(document.createElement('div'));
     tmpDiv.addClass("animDiv col-xs-3");
     $("#child-col").removeClass("col-xs-offset-3").before(tmpDiv);
     $(".animDiv").hide('slow', function(){});
@@ -177,7 +176,7 @@ function Person(name){
 //handle adding new lines inside the notif div
 function embedNL(lines) {
     var htmls = [];
-    var tmpDiv = jQuery(document.createElement('div'));
+    var tmpDiv = $(document.createElement('div'));
     for (var i = 0 ; i < lines.length ; i++) {
         htmls.push(tmpDiv.text(lines[i]).html());
     }
