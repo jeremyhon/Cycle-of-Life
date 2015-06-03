@@ -1,7 +1,7 @@
 var adultExists = false;
 var onEvent = false;
-var eventTimer = 100;
-var eventMax = 10;
+var eventTimer = 40;
+var eventMax = 80;
 var debugText = "";
 var child = new Person("defaultChild");
 var adult = undefined;
@@ -16,11 +16,30 @@ $(document).ready(function(){
 window.setInterval(function () {
     //if an event is not happening
     if(!onEvent){
+        eventTimer--;
         update(child);
-    }
-    eventTimer--;
-    //update everything
+        if(adult !== undefined)
+            update(adult);
 
+        //roll for events
+        if(eventTimer < 0){
+            eventTimer = eventMax;
+            rollEvent();
+        }
+
+    }
+    debugText = eventTimer;
+
+    updateUI();
+}, 10);
+
+function update(person){
+    //increment age
+    person.age += 0.003;
+}
+
+//update UI
+function updateUI(){
     $('.child.age').text(Math.floor(child.age));
     $('.child.happiness').text(Math.floor(child.happiness));
     jQuery('.child.notifications').html(embedNL(child.notifsHistory));
@@ -31,26 +50,20 @@ window.setInterval(function () {
         $('.adult.happiness').text(Math.floor(adult.happiness));        
         jQuery('.adult.notifications').html(embedNL(adult.notifsHistory));
     }
-}, 10);
-
-function update(person){
-    //increment age
-    person.age += 0.01;
-    //roll for events
-    if(eventTimer < 0){
-        eventTimer = eventMax;
-        rollEvent(person);
-    }
 }
 
-function rollEvent(person) {
+function rollEvent() {
     //generate a random number
-    var newRandom = Math.random();
-    //check against the event multiplier
-    if(newRandom < person.eventMultiplier){
-        //jackpot!
-        triggerEvent(person);
-    }
+    var cRand = Math.random();
+    var aRand = Math.random();
+    console.log("cRand: "+cRand);
+    console.log("aRand: "+aRand);
+    //check against the event thresholds
+    if(cRand < child.eventThreshold){
+        triggerEvent(child);
+    } else if(adult !== undefined && aRand < adult.eventThreshold) {
+        triggerEvent(adult);
+    } else {}
 }
 
 function triggerEvent(person){
@@ -107,14 +120,21 @@ function createButtons(event, person){
 
 //executed on button click
 function btnClickHandler(i, person, result){
-    $(".eventBtn-"+i).click(function(){
+    //add the event handler to body
+    $("body").on("click.event",".eventBtn-"+i,function(){
+        //turn off events
         onEvent=false;
+        //push the result
         pushNotif(person, result.notif);
+        //update the person with the results
         for (var j = 0; j < result.props.length; j++) {
             updatePerson(person, result.props[j], result.values[j]);
         }
+        //remove the button container
         $('.tempDiv').remove();
-    })
+        $("body").off("click.event");
+        eventTimer = eventMax;
+    });
 }
 
 //updates a person's property with a value.
@@ -134,6 +154,7 @@ function showAdult(){
 //takes the properties in the children and puts inside the adult divisions.
 function switchToAdult(){
     adult = child;
+    if(adult.age < 25) adult.age = 25;
     showAdult();
     child = new Person("defaultChild");
 }
@@ -143,7 +164,7 @@ function switchToAdult(){
 function Person(name){
     this.name = name;
     this.age = 0;
-    this.eventMultiplier = 0.1;
+    this.eventThreshold = 0.3;
     var allowableEvents = [];
     for (var i = 0; i < EventDB.length; i++) {
         allowableEvents += [i];
