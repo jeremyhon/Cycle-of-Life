@@ -1,16 +1,24 @@
-*{
-	border: 1px solid black;
-}
-
-.left-top{
+.left{
 	text-align: left;
 }
 
-.right-top{
+.right{
     text-align: right;
 }
 
 .center{
     position: relative;
     text-align: center;
+}
+
+.spacer{
+	margin-top: 40px;
+}
+
+.margin{
+	margin: 5px;
+}
+
+*{
+	border: 1px solid black;
 }
