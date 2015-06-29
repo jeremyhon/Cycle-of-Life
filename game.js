@@ -9,8 +9,9 @@ var adult = undefined;
 $(document).ready(function(){
     //hides adult col at first
     $("#adult-col").hide();
-    $("#main-content").fadeIn("slow"); 
-
+    $("#main-content").hide();
+    $("#main-content").fadeIn(); 
+    console.log("hi");
 })
 
 // Update function (every 10ms)
