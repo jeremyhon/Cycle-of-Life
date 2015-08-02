@@ -168,7 +168,7 @@ function Person(name){
     this.age = 0;
     this.eventThreshold = 0.3;
     var allowableEvents = [];
-    for (var i = 0; i < EventDB.length; i++) {
+    for (var i = 0; i < 4; i++) {
         allowableEvents += [i];
     }
     this.allowableEvents = allowableEvents;
