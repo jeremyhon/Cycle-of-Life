@@ -170,7 +170,7 @@ function Person(name){
     this.age = 0;
     this.eventThreshold = 0.3;
     var allowableEvents = [];
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 8; i++) {
         allowableEvents += [i];
     }
     this.allowableEvents = allowableEvents;
