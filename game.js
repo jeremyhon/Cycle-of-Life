@@ -44,12 +44,14 @@ function update(person){
 function updateUI(){
     $('.child.age').text(Math.floor(child.age));
     $('.child.happiness').text(Math.floor(child.happiness));
+    $('.child.hunger').text(Math.floor(child.hunger));
     $('.child.notifications').html(embedNL(child.notifsHistory));
     $('.child.debug').text(debugText);
 
     if(adult !== undefined){
         $('.adult.age').text(Math.floor(adult.age));
         $('.adult.happiness').text(Math.floor(adult.happiness));        
+        $('.adult.hunger').text(Math.floor(adult.hunger));        
         $('.adult.notifications').html(embedNL(adult.notifsHistory));
     }
 }
@@ -174,6 +176,7 @@ function Person(name){
     this.allowableEvents = allowableEvents;
     this.notifsHistory = [];
     this.happiness = 0;
+    this.hunger = 0;
 }
 
 //handle adding new lines inside the notif div
