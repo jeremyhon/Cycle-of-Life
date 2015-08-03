@@ -94,7 +94,7 @@ var EventDB = [
         choices: ["Play", "Throw it at father", "Hide"],
         reqs: [],
         results: [{
-            notif: "You got fleas on you",
+            notif: "You played with it",
             props: ["happiness"],
             values: [-2]
         },{

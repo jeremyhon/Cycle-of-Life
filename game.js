@@ -63,19 +63,27 @@ function rollEvent() {
     console.log("cRand: "+cRand);
     console.log("aRand: "+aRand);
     //check against the event thresholds
-    if(cRand < child.eventThreshold){
-        triggerEvent(child);
+    if (Math.floor(child.age) == 18) {
+        triggerEvent(child, 8); 
+    } else if(cRand < child.eventThreshold){
+        triggerEvent(child, 0);    
     } else if(adult !== undefined && aRand < adult.eventThreshold) {
-        triggerEvent(adult);
+        triggerEvent(adult, 0);
     } else {}
 }
 
-function triggerEvent(person){
+function triggerEvent(person, eventSelect){
     onEvent = true;
     //pick a random event from the list of allowable events.
     var randEventIndex = person.allowableEvents[Math.floor(Math.random() * person.allowableEvents.length)];
     //TODO: remove events from allowable after triggering
-    var newEvent = EventDB[randEventIndex];
+    var newEvent;
+    if (eventSelect === 0) {
+        newEvent = EventDB[randEventIndex];  
+    } else {
+        newEvent = EventDB[eventSelect];  
+        console.log(newEvent.notif);
+    }
 
     pushNotif(person, newEvent.notif);
 
