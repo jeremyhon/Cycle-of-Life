@@ -160,17 +160,17 @@ var EventDB = [
         }]
     },{
         index: 10,
-        notif: "You are still jobless",
-        choices: ["Look in the newspaper again", "Give up"],
+        notif: "You pass by a store",
+        choices: ["Look inside", "Keep your head down"],
         reqs: [],
         results: [{
-            notif: "You find nothing",
-            props: ["happiness"],
-            values: [-1]
-        },{
-            notif: "You stare blankly at the wall",
+            notif: "You see a happy family inside.",
             props: ["happiness"],
             values: [-2]
+        },{
+            notif: "Nothing changes",
+            props: ["happiness"],
+            values: [0]
         }]
     },{
         index: 11,
