@@ -1,32 +1,33 @@
 var onEvent = false;
 var eventTimer = 40;
-var eventMax = 80;
+var eventMax = 120;
 var debugText = "";
 var child = new Person("defaultChild");
-var adult = undefined;
+var parent = undefined;
 
 // load function
 $(document).ready(function(){
-    //hides adult col at first
-    $("#adult-col").hide();
+    //hides parent col at first
+    $("#parent-col").hide();
     $("#main-content").hide();
     $("#main-content").fadeIn(); 
     console.log("hi");
+    //$(".debug, .debug-label").hide();
 })
 
 // Update function (every 10ms)
 window.setInterval(function () {
     //if an event is not happening
     if(!onEvent){
-        eventTimer--;
-        update(child);
-        if(adult !== undefined)
-            update(adult);
+    	eventTimer--;
+    	update(child);
+    	if(parent !== undefined)
+    		update(parent);
 
         //roll for events
         if(eventTimer <= 0){
-            eventTimer = eventMax;
-            rollEvent();
+        	eventTimer = eventMax;
+        	rollEvent();
         }
 
     }
@@ -37,58 +38,68 @@ window.setInterval(function () {
 
 function update(person){
     //increment age
-    person.age += 0.003;
+    person.age += 0.01;
 }
 
 //update UI
 function updateUI(){
-    $('.child.age').text(Math.floor(child.age));
-    $('.child.happiness').text(Math.floor(child.happiness));
-    $('.child.hunger').text(Math.floor(child.hunger));
-    $('.child.notifications').html(embedNL(child.notifsHistory));
-    $('.child.debug').text(debugText);
+	$('.child.age').text(Math.floor(child.age));
+	$('.child.happiness').text(Math.floor(child.happiness));
+	$('.child.hunger').text(Math.floor(child.hunger));
+	$('.child.notifications').html(embedNL(child.notifsHistory));
+	$('.child.debug').text(debugText);
 
-    if(adult !== undefined){
-        $('.adult.age').text(Math.floor(adult.age));
-        $('.adult.happiness').text(Math.floor(adult.happiness));        
-        $('.adult.hunger').text(Math.floor(adult.hunger));        
-        $('.adult.notifications').html(embedNL(adult.notifsHistory));
-    }
+	if(parent !== undefined){
+		$('.parent.age').text(Math.floor(parent.age));
+		$('.parent.happiness').text(Math.floor(parent.happiness));        
+		$('.parent.hunger').text(Math.floor(parent.hunger));        
+		$('.parent.notifications').html(embedNL(parent.notifsHistory));
+	}
 }
 
 function rollEvent() {
-    //generate a random number
+    //generate a random number c for child, p for parent
     var cRand = Math.random();
-    var aRand = Math.random();
-    console.log("cRand: "+cRand);
-    console.log("aRand: "+aRand);
+    var pRand = Math.random();
     //check against the event thresholds
     if (Math.floor(child.age) == 18) {
-        triggerEvent(child, 8); 
+    	triggerEvent(child, 8); 
+    } else if (Math.floor(child.age) == 26) {
+        triggerEvent(child, 11);
     } else if(cRand < child.eventThreshold){
-        triggerEvent(child, 0);    
-    } else if(adult !== undefined && aRand < adult.eventThreshold) {
-        triggerEvent(adult, 0);
+    	triggerEvent(child, 0);    
+    } else if(parent !== undefined && pRand < parent.eventThreshold) {
+    	triggerEvent(parent, 0);
     } else {}
 }
 
 function triggerEvent(person, eventSelect){
-    onEvent = true;
+    
+    console.log(person.allowableEvents);
+	onEvent = true;
     //pick a random event from the list of allowable events.
-    var randEventIndex = person.allowableEvents[Math.floor(Math.random() * person.allowableEvents.length)];
-    //TODO: remove events from allowable after triggering
+    var personIndex = Math.floor(Math.random() * person.allowableEvents.length);
+    var randEventIndex = person.allowableEvents[personIndex];
+
     var newEvent;
     if (eventSelect === 0) {
-        newEvent = EventDB[randEventIndex];  
+    	newEvent = EventDB[randEventIndex];  
     } else {
-        newEvent = EventDB[eventSelect];  
-        console.log(newEvent.notif);
+        //transition from child - adult, change all events to adult events
+        if(eventSelect === 8){
+            person.allowableEvents = [9,10];
+        }
+        newEvent = EventDB[eventSelect];
     }
-
+    //push the story
     pushNotif(person, newEvent.notif);
 
     //create the button
     createButtons(newEvent, person);
+
+    //remove this event
+    person.allowableEvents.splice(personIndex,1);
+    console.log(person.allowableEvents);
 }
 
 function pushNotif(person, notif){
@@ -96,22 +107,24 @@ function pushNotif(person, notif){
     person.notifsHistory.push(notif);
     //trim the notifications
     if(person.notifsHistory.length > 5){
-        person.notifsHistory.shift();
+    	person.notifsHistory.shift();
     }
 }
 
 function createButtons(event, person){
-    var state = "adult";
-    var tmpDiv;
-    var tmpBtn;
-    if(person.age<25){
-        state = "child";
-    }
+	var state = "parent";
+	var tmpDiv;
+	var tmpBtn;
+	if(person.age<27){
+		state = "child";
+	}
     //for each choice in the event
     for(var i = 0; i<event.choices.length; i++){
+
         //make a button and a parent div
         tmpDiv = $(document.createElement('div'));
         tmpBtn = $(document.createElement('button'));
+
         //add the button to the div
         tmpDiv.append(tmpBtn);
 
@@ -134,14 +147,23 @@ function createButtons(event, person){
 function btnClickHandler(i, person, result){
     //add the event handler to body
     $("body").on("click.event",".eventBtn-"+i,function(){
+
         //turn off events
         onEvent=false;
+
         //push the result
         pushNotif(person, result.notif);
+
         //update the person with the results
         for (var j = 0; j < result.props.length; j++) {
-            updatePerson(person, result.props[j], result.values[j]);
+        	updatePerson(person, result.props[j], result.values[j]);
         }
+
+        //adult - parent transition
+        if (result.notif == "You have no idea what you're doing. But you feel the beginning of something"){
+            switchToParent();
+        }
+
         //remove the button container
         $('.tempDiv').remove();
         $("body").off("click.event");
@@ -151,48 +173,45 @@ function btnClickHandler(i, person, result){
 
 //updates a person's property with a value.
 function updatePerson(person, prop, value){
-    person[prop] += value;
+	person[prop] += value;
 }
 
 //took me so long to get this just right lol.
-function showAdult(){
-    var tmpDiv = $(document.createElement('div'));
-    tmpDiv.addClass("animDiv col-xs-3");
-    $("#child-col").removeClass("col-xs-offset-3").before(tmpDiv);
-    $(".animDiv").hide('slow', function(){});
-    $("#adult-col").show('slow',function(){});
+function showParent(){
+	var tmpDiv = $(document.createElement('div'));
+	tmpDiv.addClass("animDiv col-xs-3");
+	$("#child-col").removeClass("col-xs-offset-3").before(tmpDiv);
+	$(".animDiv").hide('slow', function(){});
+	$("#parent-col").show('slow',function(){});
 }
 
-//takes the properties in the children and puts inside the adult divisions.
-function switchToAdult(){
-    adult = child;
-    if(adult.age < 25) adult.age = 25;
-    showAdult();
-    child = new Person("defaultChild");
+//takes the properties in the children and puts inside the parent divisions.
+function switchToParent(){
+	parent = child;
+	if(parent.age < 25) parent.age = 25;
+	showParent();
+	child = new Person("defaultChild");
 }
 
 
 //person prototype
 function Person(name){
-    this.name = name;
-    this.age = 0;
-    this.eventThreshold = 0.3;
-    var allowableEvents = [];
-    for (var i = 0; i < 8; i++) {
-        allowableEvents += [i];
-    }
-    this.allowableEvents = allowableEvents;
-    this.notifsHistory = [];
-    this.happiness = 0;
-    this.hunger = 0;
+	this.name = name;
+	this.age = 0;
+	this.eventThreshold = 0.3;
+	this.allowableEvents = [0,1,2,3,4,5,6,7];
+    console.log(typeof this.allowableEvents);
+	this.notifsHistory = [];
+	this.happiness = 0;
+	this.hunger = 0;
 }
 
 //handle adding new lines inside the notif div
 function embedNL(lines) {
-    var htmls = [];
-    var tmpDiv = $(document.createElement('div'));
-    for (var i = 0 ; i < lines.length ; i++) {
-        htmls.push(tmpDiv.text(lines[i]).html());
-    }
-    return htmls.join("<br>");
+	var htmls = [];
+	var tmpDiv = $(document.createElement('div'));
+	for (var i = 0 ; i < lines.length ; i++) {
+		htmls.push(tmpDiv.text(lines[i]).html());
+	}
+	return htmls.join("<br>");
 }
