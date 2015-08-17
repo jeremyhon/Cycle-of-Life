@@ -1,24 +1,40 @@
+//Global variables
+
+//onEvent controls event firing
 var onEvent = false;
+
+//event timer initiation
 var eventTimer = 40;
+
+//rolls for event when eventTimer > eventMax
 var eventMax = 120;
+
+//used for debug
 var debugText = "";
+
+//initiate child and parent variables to hold persons
 var child = new Person("defaultChild");
 var parent = undefined;
 
 // load function
 $(document).ready(function(){
-    //hides parent col at first
+    //hiding and animating elements
     $("#parent-col").hide();
+    $(".debug, .debug-label").hide();
     $("#main-content").hide();
     $("#main-content").fadeIn(); 
-    $(".debug, .debug-label").hide();
 })
 
 // Update function (every 10ms)
 window.setInterval(function () {
+
     //if an event is not happening
     if(!onEvent){
+
+        //tick down timer
     	eventTimer--;
+
+        //age people
     	age(child);
     	if(parent !== undefined)
     		age(parent);
@@ -30,24 +46,27 @@ window.setInterval(function () {
         }
 
     }
-    debugText = eventTimer;
-
+    //update UI every 10ms
     updateUI();
+
 }, 10);
 
+//increment age
 function age(person){
-    //increment age
     person.age += 0.01;
 }
 
 //update UI
 function updateUI(){
+
+    //update child UI elements
 	$('.child.age').text(Math.floor(child.age));
 	$('.child.misery').text(Math.floor(child.misery));
 	$('.child.hunger').text(Math.floor(child.hunger));
 	$('.child.notifications').html(embedNL(child.notifsHistory));
 	$('.child.debug').text(debugText);
 
+    //if parent exists, update parent UI elements
 	if(parent !== undefined){
 		$('.parent.age').text(Math.floor(parent.age));
 		$('.parent.misery').text(Math.floor(parent.misery));        
@@ -56,16 +75,24 @@ function updateUI(){
 	}
 }
 
+//determines whether to fire a specific event, random event, or not at all
 function rollEvent() {
+
     //generate a random number c for child, p for parent
     var cRand = Math.random();
     var pRand = Math.random();
+
     //check against the event thresholds
     if (Math.floor(child.age) == 18) {
+        //fires transition to adult if 18yrs old
     	triggerEvent(child, adultTrigger); 
+
     } else if (Math.floor(child.age) == 26) {
+        //fires transition to parent if 26yrs old
         triggerEvent(child, parentTrigger);
+
     } else if(cRand < child.eventThreshold){
+
     	triggerEvent(child, 0);    
     } else if(parent !== undefined && pRand < parent.eventThreshold) {
     	triggerEvent(parent, 0);
@@ -75,22 +102,33 @@ function rollEvent() {
 function triggerEvent(person, eventSelect){
 	onEvent = true;
     var newEvent;
+
     //check if a particular event is selected
     if(eventSelect !== 0){
+
+        //check if the adult transition is selected
         if(eventSelect === adultTrigger){
             //transition from child - adult, change all events to adult events
             person.allowableEvents = [9,10,11];
         }
+
+        //trigger the selected event directly
         newEvent = EventDB[eventSelect];
     }
+
     //pick a random event from the list of allowable events.
     else if(eventSelect === 0 && person.allowableEvents.length > 0){
+
+        //random selection
         var personIndex = Math.floor(Math.random() * person.allowableEvents.length);
         var randEventIndex = person.allowableEvents[personIndex];
         
         newEvent = EventDB[randEventIndex];  
     }
+
+    //sometimes a bad event is selected
     if(newEvent !== undefined){
+
         //push the story
         pushNotif(person, newEvent.notif);
 
@@ -99,6 +137,7 @@ function triggerEvent(person, eventSelect){
 
         //remove this event
         person.allowableEvents.splice(personIndex,1);
+
     } else {
         onEvent = false;
     }
@@ -190,24 +229,46 @@ function updatePerson(person, prop, value){
 	person[prop] += value;
 }
 
-//took me so long to get this just right lol.
+//animation for first parent transition (child slides to left and becomes parent, new child appears)
 function showParent(){
+    /*
+    //create a temporary div element
 	var tmpDiv = $(document.createElement('div'));
 	tmpDiv.addClass("animDiv col-xs-3");
+
+    //remove the offset class in the child col and substitute with the temp div
 	$("#child-col").removeClass("col-xs-offset-3").before(tmpDiv);
+    */
+    //hide the anim div while growing the parent col
+    $("#child-col").hide();
 	$(".animDiv").hide('slow', function(){});
-	$("#parent-col").show('slow',function(){});
+	$("#parent-col").show();
+    $("#child-col").show('slow',function(){});
 }
 
-//takes the properties in the children and puts inside the parent divisions.
+//child to parent transition
 function switchToParent(){
+
+    //place child inside parent container
 	parent = child;
-	if(parent.age < 26) parent.age = 26;
+
+    //create new child inside child container
+    child = new Person("defaultChild");
+
+    //animate process
 	showParent();
+
+    //set parent events
     parent.allowableEvents = [13, 14, 15, 16];
-	child = new Person("defaultChild");
 }
 
+function skipAdult(){
+    child.age = 17;
+}
+
+function skipParent(){
+    child.age = 25;
+}
 
 //person prototype
 function Person(name){
