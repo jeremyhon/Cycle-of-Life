@@ -11,8 +11,7 @@ $(document).ready(function(){
     $("#parent-col").hide();
     $("#main-content").hide();
     $("#main-content").fadeIn(); 
-    console.log("hi");
-    //$(".debug, .debug-label").hide();
+    $(".debug, .debug-label").hide();
 })
 
 // Update function (every 10ms)
@@ -20,9 +19,9 @@ window.setInterval(function () {
     //if an event is not happening
     if(!onEvent){
     	eventTimer--;
-    	update(child);
+    	age(child);
     	if(parent !== undefined)
-    		update(parent);
+    		age(parent);
 
         //roll for events
         if(eventTimer <= 0){
@@ -36,7 +35,7 @@ window.setInterval(function () {
     updateUI();
 }, 10);
 
-function update(person){
+function age(person){
     //increment age
     person.age += 0.01;
 }
@@ -44,14 +43,14 @@ function update(person){
 //update UI
 function updateUI(){
 	$('.child.age').text(Math.floor(child.age));
-	$('.child.happiness').text(Math.floor(child.happiness));
+	$('.child.misery').text(Math.floor(child.misery));
 	$('.child.hunger').text(Math.floor(child.hunger));
 	$('.child.notifications').html(embedNL(child.notifsHistory));
 	$('.child.debug').text(debugText);
 
 	if(parent !== undefined){
 		$('.parent.age').text(Math.floor(parent.age));
-		$('.parent.happiness').text(Math.floor(parent.happiness));        
+		$('.parent.misery').text(Math.floor(parent.misery));        
 		$('.parent.hunger').text(Math.floor(parent.hunger));        
 		$('.parent.notifications').html(embedNL(parent.notifsHistory));
 	}
@@ -63,9 +62,9 @@ function rollEvent() {
     var pRand = Math.random();
     //check against the event thresholds
     if (Math.floor(child.age) == 18) {
-    	triggerEvent(child, 8); 
+    	triggerEvent(child, adultTrigger); 
     } else if (Math.floor(child.age) == 26) {
-        triggerEvent(child, 11);
+        triggerEvent(child, parentTrigger);
     } else if(cRand < child.eventThreshold){
     	triggerEvent(child, 0);    
     } else if(parent !== undefined && pRand < parent.eventThreshold) {
@@ -74,37 +73,42 @@ function rollEvent() {
 }
 
 function triggerEvent(person, eventSelect){
-    
-    console.log(person.allowableEvents);
 	onEvent = true;
-    //pick a random event from the list of allowable events.
-    var personIndex = Math.floor(Math.random() * person.allowableEvents.length);
-    var randEventIndex = person.allowableEvents[personIndex];
-
     var newEvent;
-    if (eventSelect === 0) {
-    	newEvent = EventDB[randEventIndex];  
-    } else {
-        //transition from child - adult, change all events to adult events
-        if(eventSelect === 8){
-            person.allowableEvents = [9,10];
+    //check if a particular event is selected
+    if(eventSelect !== 0){
+        if(eventSelect === adultTrigger){
+            //transition from child - adult, change all events to adult events
+            person.allowableEvents = [9,10,11];
         }
         newEvent = EventDB[eventSelect];
     }
-    //push the story
-    pushNotif(person, newEvent.notif);
+    //pick a random event from the list of allowable events.
+    else if(eventSelect === 0 && person.allowableEvents.length > 0){
+        var personIndex = Math.floor(Math.random() * person.allowableEvents.length);
+        var randEventIndex = person.allowableEvents[personIndex];
+        
+        newEvent = EventDB[randEventIndex];  
+    }
+    if(newEvent !== undefined){
+        //push the story
+        pushNotif(person, newEvent.notif);
 
-    //create the button
-    createButtons(newEvent, person);
+        //create the button
+        createButtons(newEvent, person);
 
-    //remove this event
-    person.allowableEvents.splice(personIndex,1);
-    console.log(person.allowableEvents);
+        //remove this event
+        person.allowableEvents.splice(personIndex,1);
+    } else {
+        onEvent = false;
+    }
 }
 
 function pushNotif(person, notif){
+
     //push the new notification into the queue
     person.notifsHistory.push(notif);
+
     //trim the notifications
     if(person.notifsHistory.length > 5){
     	person.notifsHistory.shift();
@@ -139,12 +143,16 @@ function createButtons(event, person){
         var result = event.results[i];
 
         //add the click handler function
-        btnClickHandler(i, person, result);
+        if(person.age < 27){
+            btnClickHandler(i, person, result, parent);
+        } else {
+            btnClickHandler(i, person, result, child);
+        }
     }
 }
 
 //executed on button click
-function btnClickHandler(i, person, result){
+function btnClickHandler(i, person, result, otherPerson){
     //add the event handler to body
     $("body").on("click.event",".eventBtn-"+i,function(){
 
@@ -157,6 +165,12 @@ function btnClickHandler(i, person, result){
         //update the person with the results
         for (var j = 0; j < result.props.length; j++) {
         	updatePerson(person, result.props[j], result.values[j]);
+        }
+
+        if (result.otherprops !== undefined){
+            for (var k = 0; k < result.otherprops.length; k++) {
+                updatePerson(otherPerson, result.otherprops[k], result.othervalues[k]);
+            }
         }
 
         //adult - parent transition
@@ -188,8 +202,9 @@ function showParent(){
 //takes the properties in the children and puts inside the parent divisions.
 function switchToParent(){
 	parent = child;
-	if(parent.age < 25) parent.age = 25;
+	if(parent.age < 26) parent.age = 26;
 	showParent();
+    parent.allowableEvents = [13, 14, 15, 16];
 	child = new Person("defaultChild");
 }
 
@@ -200,10 +215,9 @@ function Person(name){
 	this.age = 0;
 	this.eventThreshold = 0.3;
 	this.allowableEvents = [0,1,2,3,4,5,6,7];
-    console.log(typeof this.allowableEvents);
-	this.notifsHistory = [];
-	this.happiness = 0;
-	this.hunger = 0;
+    this.notifsHistory = [];
+    this.misery = 0;
+    this.hunger = 0;
 }
 
 //handle adding new lines inside the notif div
