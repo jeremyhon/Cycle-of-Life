@@ -1,13 +1,16 @@
 //Global variables
 
 //onEvent controls event firing
-var onEvent = false;
+var onEvent = true;
 
 //event timer initiation
 var eventTimer = 40;
 
 //rolls for event when eventTimer > eventMax
 var eventMax = 120;
+
+//age increment every 10 ms
+var ageInc = 0.008;
 
 //used for debug
 var debugText = "";
@@ -23,6 +26,16 @@ $(document).ready(function(){
     $(".debug, .debug-label").hide();
     $("#main-content").hide();
     $("#main-content").fadeIn(); 
+
+    $( "<div>Warning: You are about to experience apathy, misery, and possibly starvation. Are you sure you wish to proceed?</div>" ).dialog({
+        buttons: [{
+          text: "Ok",
+          click: function() {
+            $( this ).dialog( "close" );
+            onEvent = false;
+          }
+        }]
+    });
 })
 
 // Update function (every 10ms)
@@ -51,11 +64,6 @@ window.setInterval(function () {
 
 }, 10);
 
-//increment age
-function age(person){
-    person.age += 0.01;
-}
-
 //update UI
 function updateUI(){
 
@@ -73,6 +81,32 @@ function updateUI(){
 		$('.parent.hunger').text(Math.floor(parent.hunger));        
 		$('.parent.notifications').html(embedNL(parent.notifsHistory));
 	}
+
+    //checks if misery and hunger should be shown. If false, do not show, else if hidden and a number, show
+    updateUIStat("child","misery");
+    updateUIStat("child","hunger");
+    if(parent !== undefined){
+        updateUIStat("parent","misery");
+        updateUIStat("parent","hunger");
+    }
+
+}
+
+function updateUIStat(person, stat){
+    var personObj;
+    if(person === "child"){
+        personObj = child;
+    } else {
+        personObj = parent;
+    }
+
+    if(personObj[stat] === false){
+        $('.'+person+'.'+stat).hide();
+        $('.'+person+'.'+stat+'-label').hide();
+    } else if($('.'+person+'.'+stat).is(':hidden')){ 
+        $('.'+person+'.'+stat).show('slow', function(){});
+        $('.'+person+'.'+stat+'-label').show('slow', function(){});
+    }
 }
 
 //determines whether to fire a specific event, random event, or not at all
@@ -84,18 +118,23 @@ function rollEvent() {
 
     //check against the event thresholds
     if (Math.floor(child.age) == 18) {
+        console.log("triggering adult transition");
         //fires transition to adult if 18yrs old
     	triggerEvent(child, adultTrigger); 
 
     } else if (Math.floor(child.age) == 26) {
+        console.log("triggering parent transition");
         //fires transition to parent if 26yrs old
         triggerEvent(child, parentTrigger);
 
     } else if(cRand < child.eventThreshold){
-
+        console.log("triggering random child event");
     	triggerEvent(child, 0);    
+
     } else if(parent !== undefined && pRand < parent.eventThreshold) {
+        console.log("triggering random parent event");
     	triggerEvent(parent, 0);
+        
     } else {}
 }
 
@@ -224,6 +263,11 @@ function btnClickHandler(i, person, result, otherPerson){
     });
 }
 
+//increment age
+function age(person){
+    updatePerson(person, "age", ageInc);
+}
+
 //updates a person's property with a value.
 function updatePerson(person, prop, value){
 	person[prop] += value;
@@ -242,7 +286,7 @@ function animChildToParent(){
     $("#parent-col").show();
 
     //fade out offset col while fading in child column
-	$(".animDiv").hide('slow', function(){});
+	$(".offsetDiv").hide('slow', function(){});
     $("#child-col").show('slow',function(){});
 }
 
@@ -294,8 +338,18 @@ function Person(name){
 	this.eventThreshold = 0.3;
 	this.allowableEvents = [0,1,2,3,4,5,6,7];
     this.notifsHistory = [];
-    this.misery = 0;
-    this.hunger = 0;
+    this.misery = false;
+    this.hunger = false;
+}
+
+//get an object property name as a string
+function propName(prop, value){
+   for(var i in prop) {
+       if (prop[i] == value){
+            return i;
+       }
+   }
+   return false;
 }
 
 //handle adding new lines inside the notif div
