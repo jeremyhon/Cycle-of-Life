@@ -1,4 +1,7 @@
 //the events database. store all events here.
+var adultTrigger = 8;
+var parentTrigger = 12;
+
 var EventDB = [
     {
         index: 0, 
@@ -7,8 +10,8 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "He backhands you and takes another sip from the bottle",
-            props: ["happiness", "hunger"],
-            values: [-1, -1]
+            props: ["misery", "hunger"],
+            values: [1, 3]
         }]
     },{
         index: 1,
@@ -17,12 +20,12 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "Your father grudginly passes you a cup, and tells you to fill it yourself",
-            props: ["happiness", "hunger"],
-            values: [2, 2]
+            props: ["misery", "hunger"],
+            values: [-2, -2]
         },{
             notif: "Nothing happens",
-            props: ["happiness", "hunger"],
-            values: [0, -1]
+            props: ["hunger"],
+            values: [3]
         }]
     },{
         index: 2,
@@ -31,12 +34,12 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You dream of the cold, the dark, and the misery",
-            props: ["happiness"],
-            values: [-3]
+            props: ["misery"],
+            values: [3]
         },{
             notif: "The night isn't as scary as you thought",
-            props: ["happiness"],
-            values: [3]
+            props: ["misery"],
+            values: [-3]
         }]
     },{
         index: 3,
@@ -45,12 +48,12 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You play in the grass and the sunshine",
-            props: ["happiness", "hunger"],
-            values: [4, -1]
+            props: ["misery"],
+            values: [-4]
         },{
             notif: "You wait for your father's return",
-            props: ["happiness"],
-            values: [-1]
+            props: ["misery"],
+            values: [1]
         }]
     },{
         index: 4,
@@ -59,15 +62,15 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "It wags it's tail",
-            props: ["happiness", "hunger"],
-            values: [4, -1]
+            props: ["misery", "hunger"],
+            values: [-4, -1]
         },{
             notif: "It nibbles happily and licks you",
-            props: ["happiness"],
-            values: [5]
+            props: ["misery"],
+            values: [-5]
         },{
             notif: "You hid successfully",
-            props: ["happiness"],
+            props: ["misery"],
             values: [0]
         }]
     },{
@@ -77,15 +80,15 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You got fleas on you",
-            props: ["happiness"],
-            values: [-2]
+            props: ["misery"],
+            values: [2]
         },{
             notif: "It bites you in greed",
-            props: ["happiness"],
-            values: [-5]
+            props: ["misery"],
+            values: [5]
         },{
             notif: "It chases after you",
-            props: ["happiness"],
+            props: ["misery"],
             values: [0]
         }]
     },{
@@ -95,15 +98,15 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You played with it",
-            props: ["happiness"],
-            values: [-2]
+            props: ["misery"],
+            values: [-1]
         },{
             notif: "Father got angry",
-            props: ["happiness"],
-            values: [-3]
+            props: ["misery"],
+            values: [3]
         },{
             notif: "You hid successfully",
-            props: ["happiness"],
+            props: ["misery"],
             values: [0]
         }]
     },{
@@ -112,16 +115,16 @@ var EventDB = [
         choices: ["Play", "Look at father", "Hide"],
         reqs: [],
         results: [{
-            notif: "Father kicked the ball at you",
-            props: ["happiness"],
-            values: [-2]
+            notif: "You accidentally kick the ball over the fence.",
+            props: ["misery"],
+            values: [2]
         },{
             notif: "Father scolds you for not playing",
-            props: ["happiness"],
-            values: [-1]
+            props: ["misery"],
+            values: [1]
         },{
             notif: "You hid successfully",
-            props: ["happiness"],
+            props: ["misery"],
             values: [0]
         }]
     }
@@ -141,8 +144,8 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You embark on the journey of life",
-            props: ["happiness"],
-            values: [10]
+            props: ["misery"],
+            values: [-4]
         }]
     },{
         index: 9,
@@ -151,12 +154,12 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You find nothing",
-            props: ["happiness"],
-            values: [-1]
+            props: ["misery"],
+            values: [1]
         },{
             notif: "You stare blankly at the wall",
-            props: ["happiness"],
-            values: [-2]
+            props: ["misery"],
+            values: [2]
         }]
     },{
         index: 10,
@@ -165,26 +168,120 @@ var EventDB = [
         reqs: [],
         results: [{
             notif: "You see a happy family inside.",
-            props: ["happiness"],
-            values: [-2]
+            props: ["misery"],
+            values: [2]
         },{
             notif: "Nothing changes",
-            props: ["happiness"],
+            props: ["misery"],
             values: [0]
         }]
     },{
         index: 11,
+        notif: "You wake up to another dark, dull day.",
+        choices: ["Go digging for food", "Go back to sleep"],
+        reqs: [],
+        results: [{
+            notif: "You find a small snack kiosk with a sympathetic owner.",
+            props: ["misery", "hunger"],
+            values: [-2, -3]
+        },{
+            notif: "Nothing means anything to you anymore.",
+            props: ["misery", "hunger"],
+            values: [5, 3]
+        }]
+    }
+
+/********************************************************
+
+                        PARENT
+
+********************************************************/
+
+    ,{
+        index: 12,
         notif: "You see a kid on the sidewalk. Grovelling. Miserable. He reminds you of yourself.",
         choices: ["Bring him home", "Walk past him"],
         reqs: [],
         results: [{
             notif: "You have no idea what you're doing. But you feel the beginning of something",
-            props: ["happiness"],
-            values: [1]
+            props: ["misery"],
+            values: [-1]
         },{
             notif: "You return to a life of emptiness",
-            props: ["happiness"],
-            values: [-20]
+            props: ["misery"],
+            values: [20]
         }]
-    }
+    },{
+        index: 13,
+        notif: "The kid brings home a dead cat.",
+        choices: ["Slap him", "Ignore him"],
+        reqs: [],
+        results: [{
+            notif: "You throw out the dead cat afterwards.",
+            props: ["misery"],
+            values: [1],
+            otherprops: ["misery"],
+            othervalues:[4]
+        },{
+            notif: "The next day, he brings home a dead mouse.",
+            props: ["misery"],
+            values: [5],
+            otherprops: ["misery"],
+            othervalues:[-1]
+        }]
+    },{
+        index: 14,
+        notif: "The kid asks you for food.",
+        choices: ["Slap him", "Explain to him"],
+        reqs: [],
+        results: [{
+            notif: "You take a sip from your bottle afterwards.",
+            props: ["misery", "hunger"],
+            values: [1, -1],
+            otherprops: ["misery", "hunger"],
+            othervalues:[4, 1]
+        },{
+            notif: "We don't have food.",
+            props: ["misery", "hunger"],
+            values: [0, 1],
+            otherprops: ["misery", "hunger"],
+            othervalues:[1, 1]
+        }]
+    },{
+        index: 15,
+        notif: "The kid asks you for water.",
+        choices: ["Pass him a cup", "Ignore him"],
+        reqs: [],
+        results: [{
+            notif: "You give him your share.",
+            props: ["hunger"],
+            values: [3],
+            otherprops: ["misery","hunger"],
+            othervalues:[-2,-3]
+        },{
+            notif: "He's already had his share",
+            props: ["hunger"],
+            values: [-2],
+            otherprops: ["misery","hunger"],
+            othervalues:[3,3]
+        }]
+    },{
+        index: 16,
+        notif: "The kid passes you a ball.",
+        choices: ["Pass it back", "Sell the ball"],
+        reqs: [],
+        results: [{
+            notif: "You kick it too hard. He doubles over in pain.",
+            props: ["misery"],
+            values: [2],
+            otherprops: ["misery"],
+            othervalues:[4]
+        },{
+            notif: "There's enough food for the both of you tonight.",
+            props: ["misery", "hunger"],
+            values: [-1, -4],
+            otherprops: ["misery", "hunger"],
+            othervalues:[0, -4]
+        }]
+    },
 ];
