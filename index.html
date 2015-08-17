@@ -6,9 +6,11 @@
 
 	<!-- bootstrap and jquery -->
 	<script src="lib\jquery-2.1.4.js"></script>
+	<script src="lib\jquery-ui.min.js"></script>
 	<script src="lib\bootstrap.js"></script>
 	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.42.min.js"></script>
 	<link rel="stylesheet" href="css\bootstrap.css">
+	<link rel="stylesheet" href="css\jquery-ui.min.css">
 	<!--
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -24,7 +26,7 @@
 <body>
 	<div class="container" id="main-content">
 		<div class="row spacer">
-			<div class="col-xs-3 animDiv"></div>
+			<div class="col-xs-3 offsetDiv"></div>
 			<div class="col-xs-6" id="parent-col">
 				<div class="row parent top-bar">
 					<div class="col-xs-3 text-left">
@@ -33,8 +35,8 @@
 					<div class="col-xs-6"></div>
 					<div class="col-xs-3 text-right">
 						Age: <span class="parent age"></span><br>
-						Misery: <span class="parent misery"></span><br>
-						Hunger: <span class="parent hunger"></span>
+						<span class="parent misery-label">Misery:</span> <span class="parent misery"></span><br>
+						<span class="parent hunger-label">Hunger:</span> <span class="parent hunger"></span>
 					</div>
 				</div>
 				<div class ="row parent spacer center">
@@ -52,8 +54,8 @@
 					<div class="col-xs-6"></div>
 					<div class="col-xs-3 text-right">
 						Age: <span class="child age"></span><br>
-						Misery: <span class="child misery"></span><br>
-						Hunger: <span class="child hunger"></span>
+						<span class="child misery-label">Misery: </span> <span class="child misery"></span><br>
+						<span class="child hunger-label">Hunger: </span> <span class="child hunger"></span>
 					</div>
 				</div>
 				<div class ="row child spacer center">
