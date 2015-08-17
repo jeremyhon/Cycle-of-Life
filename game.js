@@ -230,33 +230,50 @@ function updatePerson(person, prop, value){
 }
 
 //animation for first parent transition (child slides to left and becomes parent, new child appears)
-function showParent(){
-    /*
-    //create a temporary div element
-	var tmpDiv = $(document.createElement('div'));
-	tmpDiv.addClass("animDiv col-xs-3");
+function animChildToParent(){
 
-    //remove the offset class in the child col and substitute with the temp div
-	$("#child-col").removeClass("col-xs-offset-3").before(tmpDiv);
-    */
-    //hide the anim div while growing the parent col
+    //place child inside parent container
+    parent = child;
+    //create new child inside child container
+    child = new Person("defaultChild");
+
+    //hide child column, replace with parent column
     $("#child-col").hide();
+    $("#parent-col").show();
+
+    //fade out offset col while fading in child column
 	$(".animDiv").hide('slow', function(){});
-	$("#parent-col").show();
     $("#child-col").show('slow',function(){});
+}
+
+function animReplaceParent(){
+
+    //fade out parent column
+    $("#parent-col").hide('slow',function(){//callback once complete (otherwise will execute simultaneously)
+
+        //place child inside parent container. child column still visible, still shows child
+        parent = child;
+        child = new Person("defaultChild");
+
+        //replace child column with parent column. parent column visible, shows parent
+        $("#parent-col").show();
+        $("#child-col").hide();
+
+        //fade in child column with new child
+        $("#child-col").show('slow',function(){});
+    });     
 }
 
 //child to parent transition
 function switchToParent(){
 
-    //place child inside parent container
-	parent = child;
-
-    //create new child inside child container
-    child = new Person("defaultChild");
-
-    //animate process
-	showParent();
+    //check if this is the first transition
+    if(parent !== undefined){
+        animReplaceParent();
+    } else {
+        //for the first transition
+        animChildToParent();
+    }
 
     //set parent events
     parent.allowableEvents = [13, 14, 15, 16];
