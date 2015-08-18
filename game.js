@@ -19,6 +19,11 @@ var debugText = "";
 var child = new Person("defaultChild");
 var parent = undefined;
 
+//initiate event arrays
+var childEvents = [];
+var adultEvents = [];
+var parentEvents = [];
+
 // load function
 $(document).ready(function(){
     //hiding and animating elements
@@ -36,6 +41,9 @@ $(document).ready(function(){
           }
         }]
     });
+
+    createArrays();
+    child.allowableEvents = childEvents.slice();
 })
 
 // Update function (every 10ms)
@@ -61,10 +69,9 @@ window.setInterval(function () {
     }
     //update UI every 10ms
     updateUI();
-
 }, 10);
 
-//update UI
+// UI update code
 function updateUI(){
 
     //update child UI elements
@@ -89,9 +96,9 @@ function updateUI(){
         updateUIStat("parent","misery");
         updateUIStat("parent","hunger");
     }
-
 }
 
+// refactored animation code for misery and hunger stats
 function updateUIStat(person, stat){
     var personObj;
     if(person === "child"){
@@ -100,12 +107,14 @@ function updateUIStat(person, stat){
         personObj = parent;
     }
 
+    var statStr = '.'+person+'.'+stat;
+
     if(personObj[stat] === false){
-        $('.'+person+'.'+stat).hide();
-        $('.'+person+'.'+stat+'-label').hide();
-    } else if($('.'+person+'.'+stat).is(':hidden')){ 
-        $('.'+person+'.'+stat).show('slow', function(){});
-        $('.'+person+'.'+stat+'-label').show('slow', function(){});
+        $(statStr).hide();
+        $(statStr+'-label').hide();
+    } else if($(statStr).is(':hidden')){ 
+        $(statStr).show('slow', function(){});
+        $(statStr+'-label').show('slow', function(){});
     }
 }
 
@@ -118,26 +127,21 @@ function rollEvent() {
 
     //check against the event thresholds
     if (Math.floor(child.age) == 18) {
-        console.log("triggering adult transition");
         //fires transition to adult if 18yrs old
     	triggerEvent(child, adultTrigger); 
 
     } else if (Math.floor(child.age) == 26) {
-        console.log("triggering parent transition");
         //fires transition to parent if 26yrs old
         triggerEvent(child, parentTrigger);
-
+    //fires normal events otherwise
     } else if(cRand < child.eventThreshold){
-        console.log("triggering random child event");
     	triggerEvent(child, 0);    
-
     } else if(parent !== undefined && pRand < parent.eventThreshold) {
-        console.log("triggering random parent event");
     	triggerEvent(parent, 0);
-        
     } else {}
 }
 
+//triggers the actual event
 function triggerEvent(person, eventSelect){
 	onEvent = true;
     var newEvent;
@@ -148,7 +152,7 @@ function triggerEvent(person, eventSelect){
         //check if the adult transition is selected
         if(eventSelect === adultTrigger){
             //transition from child - adult, change all events to adult events
-            person.allowableEvents = [9,10,11];
+            person.allowableEvents = adultEvents.slice();
         }
 
         //trigger the selected event directly
@@ -182,6 +186,7 @@ function triggerEvent(person, eventSelect){
     }
 }
 
+//pushes a string to the specified person's notif section
 function pushNotif(person, notif){
 
     //push the new notification into the queue
@@ -193,6 +198,7 @@ function pushNotif(person, notif){
     }
 }
 
+//creates event buttons and generates click handlers for the buttons
 function createButtons(event, person){
 	var state = "parent";
 	var tmpDiv;
@@ -229,15 +235,15 @@ function createButtons(event, person){
     }
 }
 
-//executed on button click
+//click handlers that are executed on button click
 function btnClickHandler(i, person, result, otherPerson){
     //add the event handler to body
     $("body").on("click.event",".eventBtn-"+i,function(){
 
-        //turn off events
+        //turn off events so age doesn't tick
         onEvent=false;
 
-        //push the result
+        //push event result notif
         pushNotif(person, result.notif);
 
         //update the person with the results
@@ -290,6 +296,7 @@ function animChildToParent(){
     $("#child-col").show('slow',function(){});
 }
 
+//animation for following parent transitions (child slides to left and replaces parent)
 function animReplaceParent(){
 
     //fade out parent column
@@ -298,6 +305,7 @@ function animReplaceParent(){
         //place child inside parent container. child column still visible, still shows child
         parent = child;
         child = new Person("defaultChild");
+        child.allowableEvents = childEvents.slice();
 
         //replace child column with parent column. parent column visible, shows parent
         $("#parent-col").show();
@@ -320,7 +328,7 @@ function switchToParent(){
     }
 
     //set parent events
-    parent.allowableEvents = [13, 14, 15, 16];
+    parent.allowableEvents = parentEvents.slice();
 }
 
 function skipAdult(){
@@ -331,12 +339,26 @@ function skipParent(){
     child.age = 25;
 }
 
+function createArrays(){
+    for(var i = 0; i < EventDB.length; i++){
+        if(i == adultTrigger) continue;
+        if(i == parentTrigger) continue;
+        if(i < adultTrigger){
+            childEvents.push(i);
+        } else if (i < parentTrigger){
+            adultEvents.push(i);
+        } else {
+            parentEvents.push(i);
+        }
+    }
+}
+
 //person prototype
 function Person(name){
 	this.name = name;
 	this.age = 0;
 	this.eventThreshold = 0.3;
-	this.allowableEvents = [0,1,2,3,4,5,6,7];
+	this.allowableEvents = [];
     this.notifsHistory = [];
     this.misery = false;
     this.hunger = false;
