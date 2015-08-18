@@ -5,21 +5,21 @@ var parentTrigger = 12;
 var EventDB = [
     {
         index: 0, 
-        notif: "You are starving", 
-        choices: ["Ask your father for food"],
+        notif: "I am starving", 
+        choices: ["Ask father for food"],
         reqs: [],
         results: [{
-            notif: "He backhands you and takes another sip from the bottle",
+            notif: "He backhands me and takes another sip from the bottle",
             props: ["misery", "hunger"],
             values: [1, 3]
         }]
     },{
         index: 1,
-        notif: "You are thirsty",
+        notif: "I am thirsty",
         choices: ["Ask your father for water", "Remain silent"],
         reqs: [],
         results: [{
-            notif: "Your father grudginly passes you a cup, and tells you to fill it yourself",
+            notif: "Father grudginly passes me a cup, and tells me to fill it myself",
             props: ["misery", "hunger"],
             values: [-2, -2]
         },{
@@ -29,35 +29,35 @@ var EventDB = [
         }]
     },{
         index: 2,
-        notif: "You wake up in the middle of the night from a nightmare",
+        notif: "I wake up in the middle of the night from a nightmare",
         choices: ["Go back to sleep", "Stay awake"],
         reqs: [],
         results: [{
-            notif: "You dream of the cold, the dark, and the misery",
+            notif: "I dream of the cold, the dark, and the misery",
             props: ["misery"],
             values: [3]
         },{
-            notif: "The night isn't as scary as you thought",
+            notif: "The night isn't as scary as I thought",
             props: ["misery"],
             values: [-3]
         }]
     },{
         index: 3,
-        notif: "Your father has left for the day",
+        notif: "Father has left for the day",
         choices: ["Go outside", "Stay inside"],
         reqs: [],
         results: [{
-            notif: "You play in the grass and the sunshine",
+            notif: "I play in the grass and the sunshine",
             props: ["misery"],
             values: [-4]
         },{
-            notif: "You wait for your father's return",
+            notif: "I wait for father's return",
             props: ["misery"],
             values: [1]
         }]
     },{
         index: 4,
-        notif: "You see a puppy",
+        notif: "I see a puppy",
         choices: ["Touch it", "Feed it", "Hide"],
         reqs: [],
         results: [{
@@ -65,39 +65,39 @@ var EventDB = [
             props: ["misery", "hunger"],
             values: [-4, -1]
         },{
-            notif: "It nibbles happily and licks you",
+            notif: "It nibbles happily and licks me",
             props: ["misery"],
             values: [-5]
         },{
-            notif: "You hid successfully",
+            notif: "I hid successfully",
             props: ["misery"],
             values: [0]
         }]
     },{
         index: 5,
-        notif: "You see a dog",
+        notif: "I see a dog",
         choices: ["Touch it", "Feed it", "Run away"],
         reqs: [],
         results: [{
-            notif: "You got fleas on you",
+            notif: "I got fleas on myself",
             props: ["misery"],
             values: [2]
         },{
-            notif: "It bites you in greed",
+            notif: "It bites me in greed",
             props: ["misery"],
             values: [5]
         },{
-            notif: "It chases after you",
+            notif: "It chases after me",
             props: ["misery"],
             values: [0]
         }]
     },{
         index: 6,
-        notif: "You see a ball",
+        notif: "I see a ball",
         choices: ["Play", "Throw it at father", "Hide"],
         reqs: [],
         results: [{
-            notif: "You played with it",
+            notif: "I played with it",
             props: ["misery"],
             values: [-1]
         },{
@@ -105,25 +105,25 @@ var EventDB = [
             props: ["misery"],
             values: [3]
         },{
-            notif: "You hid successfully",
+            notif: "I hid successfully",
             props: ["misery"],
             values: [0]
         }]
     },{
         index: 7,
-        notif: "Father passes you a ball",
+        notif: "Father passes me a ball",
         choices: ["Play", "Look at father", "Hide"],
         reqs: [],
         results: [{
-            notif: "You accidentally kick the ball over the fence.",
+            notif: "I accidentally kick the ball over the fence.",
             props: ["misery"],
             values: [2]
         },{
-            notif: "Father scolds you for not playing",
+            notif: "Father scolds me for not playing",
             props: ["misery"],
             values: [1]
         },{
-            notif: "You hid successfully",
+            notif: "I hid successfully",
             props: ["misery"],
             values: [0]
         }]
